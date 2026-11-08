@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BatchRecord",
+  "description": "Validation schema for medicine production and expiration tracking batches",
+  "type": "object",
+  "required": [
+    "batch_id",
+    "batch_number",
+    "medicine_id",
+    "facility_id",
+    "manufacturing_date",
+    "expiration_date",
+    "initial_quantity",
+    "remaining_quantity",
+    "status"
+  ],
+  "properties": {
+    "batch_id": {
+      "type": "string",
+      "pattern": "^BAT-[A-Z0-9]{6,16}$"
+    },
+    "batch_number": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 64
+    },
+    "medicine_id": {
+      "type": "string",
+      "pattern": "^MED-[A-Z0-9]{6,12}$"
+    },
+    "facility_id": {
+      "type": "string",
+      "pattern": "^FAC-[A-Z0-9]{4,10}$"
+    },
+    "supplier_id": {
+      "type": "string"
+    },
+    "manufacturing_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "initial_quantity": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "remaining_quantity": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unit_purchase_cost": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Active", "Near Expiry", "Expired", "Quarantined", "Recalled", "Depleted"]
+    },
+    "storage_location": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

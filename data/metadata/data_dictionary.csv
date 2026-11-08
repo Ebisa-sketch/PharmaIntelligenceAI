@@ -1,0 +1,21 @@
+entity,field_name,data_type,nullable,description,validation_rules,example
+medicines,medicine_id,VARCHAR(32),false,Unique system identifier for medicine,MED-[A-Z0-9]+,MED-AMOXI500
+medicines,name,VARCHAR(255),false,Commercial trade or generic name,Non-empty,Amoxicillin 500mg Capsule
+medicines,generic_name,VARCHAR(255),false,Active pharmaceutical ingredient,Non-empty,Amoxicillin
+medicines,atc_code,VARCHAR(10),false,WHO ATC anatomical therapeutic chemical code,Regex [A-Z][0-9]{2}[A-Z][0-9]{2},J01CA04
+medicines,dosage_form,VARCHAR(50),false,Physical pharmaceutical form,Standard enum,Capsule
+medicines,strength,VARCHAR(50),false,Drug concentration or potency,Non-empty,500mg
+medicines,storage_condition,VARCHAR(100),false,Storage environment requirement,Standard enum,Room Temperature
+inventory,inventory_id,VARCHAR(32),false,Unique stock inventory record identifier,INV-[A-Z0-9]+,INV-0019283
+inventory,facility_id,VARCHAR(32),false,Pharmacy or warehouse facility identifier,FAC-[A-Z0-9]+,FAC-NYC01
+inventory,medicine_id,VARCHAR(32),false,Foreign key reference to medicines,MED-[A-Z0-9]+,MED-AMOXI500
+inventory,stock_on_hand,INTEGER,false,Current physically available units,>= 0,1450
+inventory,reorder_level,INTEGER,false,Threshold triggering procurement reorder,>= 0,500
+inventory,reorder_quantity,INTEGER,false,Standard replenishment lot size,>= 1,1000
+inventory,safety_stock,INTEGER,false,Buffer stock to absorb demand uncertainty,>= 0,250
+batches,batch_id,VARCHAR(32),false,Unique lot batch record identifier,BAT-[A-Z0-9]+,BAT-20261101A
+batches,batch_number,VARCHAR(64),false,Manufacturer lot identifier,Non-empty,LOT-AX-99182
+batches,manufacturing_date,DATE,false,Production date,Valid date <= today,2026-05-10
+batches,expiration_date,DATE,false,Expiry threshold date,Valid date > manufacturing_date,2027-05-09
+batches,remaining_quantity,INTEGER,false,Remaining unconsumed quantity in batch,>= 0,850
+batches,status,VARCHAR(32),false,Current regulatory status of batch,Active/Near Expiry/Expired/Recalled,Active

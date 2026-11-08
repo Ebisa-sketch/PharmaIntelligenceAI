@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "InventoryRecord",
+  "description": "Validation schema for pharmacy facility inventory status records",
+  "type": "object",
+  "required": [
+    "inventory_id",
+    "facility_id",
+    "medicine_id",
+    "stock_on_hand",
+    "reorder_level",
+    "reorder_quantity",
+    "safety_stock",
+    "last_updated_at"
+  ],
+  "properties": {
+    "inventory_id": {
+      "type": "string",
+      "pattern": "^INV-[A-Z0-9]{6,16}$"
+    },
+    "facility_id": {
+      "type": "string",
+      "pattern": "^FAC-[A-Z0-9]{4,10}$"
+    },
+    "medicine_id": {
+      "type": "string",
+      "pattern": "^MED-[A-Z0-9]{6,12}$"
+    },
+    "stock_on_hand": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "stock_reserved": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "stock_in_transit": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "reorder_level": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reorder_quantity": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "safety_stock": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unit_cost": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "selling_price": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "average_daily_consumption": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "lead_time_days": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "last_updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

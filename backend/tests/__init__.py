@@ -1,0 +1,1 @@
+"""PharmaIntelligence AI test suite."""
