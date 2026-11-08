@@ -124,11 +124,11 @@ export default function ModelComparisonPage() {
           <div className="flex items-center gap-4 shrink-0">
             <div className="text-center p-3 rounded-lg bg-white/10">
               <div className="text-[10px] text-blue-200 uppercase font-semibold">ADI (Inter-arrival)</div>
-              <div className="text-lg font-bold text-white mt-0.5">{comparison.adi.toFixed(2)}</div>
+              <div className="text-lg font-bold text-white mt-0.5">{(comparison.adi ?? 0).toFixed(2)}</div>
             </div>
             <div className="text-center p-3 rounded-lg bg-white/10">
               <div className="text-[10px] text-blue-200 uppercase font-semibold">CV² (Variance)</div>
-              <div className="text-lg font-bold text-white mt-0.5">{comparison.cv2.toFixed(2)}</div>
+              <div className="text-lg font-bold text-white mt-0.5">{(comparison.cv2 ?? 0).toFixed(2)}</div>
             </div>
           </div>
         </div>
@@ -173,11 +173,11 @@ export default function ModelComparisonPage() {
                     )}
                   </td>
                   <td className="px-6 py-3.5 text-blue-700 font-bold">
-                    {m.wape.toFixed(1)}%
+                    {(m.wape ?? 0).toFixed(1)}%
                   </td>
-                  <td className="px-6 py-3.5 text-slate-600">{m.rmse.toFixed(2)}</td>
-                  <td className="px-6 py-3.5 text-slate-600">{m.mae.toFixed(2)}</td>
-                  <td className="px-6 py-3.5 text-slate-600">{m.mase.toFixed(2)}</td>
+                  <td className="px-6 py-3.5 text-slate-600">{(m.rmse ?? 0).toFixed(2)}</td>
+                  <td className="px-6 py-3.5 text-slate-600">{(m.mae ?? 0).toFixed(2)}</td>
+                  <td className="px-6 py-3.5 text-slate-600">{(m.mase ?? 0).toFixed(2)}</td>
                   <td className="px-6 py-3.5 text-right">
                     {m.recommended ? (
                       <span className="text-emerald-600 text-xs font-semibold flex items-center justify-end gap-1">

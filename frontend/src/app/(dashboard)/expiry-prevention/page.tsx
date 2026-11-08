@@ -66,12 +66,12 @@ export default function ExpiryPreventionPage() {
   });
 
   const totalValueAtRisk = expiryRisks.reduce(
-    (sum, item) => sum + item.financial_value_at_risk_etb,
+    (sum, item) => sum + (item.financial_value_at_risk_etb ?? 0),
     0
   );
 
   const totalUnusedUnits = expiryRisks.reduce(
-    (sum, item) => sum + item.projected_unused_stock,
+    (sum, item) => sum + (item.projected_unused_stock ?? 0),
     0
   );
 
@@ -229,24 +229,24 @@ export default function ExpiryPreventionPage() {
                     </div>
                   </td>
                   <td className="px-6 py-3.5 font-bold text-slate-900">
-                    {item.current_quantity.toLocaleString()}
+                    {(item.current_quantity ?? 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-3.5 text-slate-700 font-medium">
-                    {item.unit_cost.toFixed(2)} ETB
+                    {(item.unit_cost ?? 0).toFixed(2)} ETB
                   </td>
                   <td className="px-6 py-3.5 font-mono text-slate-600">
                     {item.expiry_date}
                   </td>
                   <td className="px-6 py-3.5 font-bold">
-                    <span className={item.days_until_expiry <= 30 ? 'text-rose-600' : 'text-amber-600'}>
-                      {item.days_until_expiry} days
+                    <span className={(item.days_until_expiry ?? 0) <= 30 ? 'text-rose-600' : 'text-amber-600'}>
+                      {item.days_until_expiry ?? 0} days
                     </span>
                   </td>
                   <td className="px-6 py-3.5 font-semibold text-amber-700">
-                    {item.projected_unused_stock.toLocaleString()} units
+                    {(item.projected_unused_stock ?? 0).toLocaleString()} units
                   </td>
                   <td className="px-6 py-3.5 font-bold text-rose-600">
-                    {item.financial_value_at_risk_etb.toLocaleString()} ETB
+                    {(item.financial_value_at_risk_etb ?? 0).toLocaleString()} ETB
                   </td>
                   <td className="px-6 py-3.5">{getRiskBadge(item.risk_level)}</td>
                   <td className="px-6 py-3.5 text-right">

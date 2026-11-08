@@ -135,7 +135,7 @@ export default function DataQualityPage() {
             AI Training &amp; Inference Readiness Score
           </div>
           <h2 className="text-3xl font-extrabold tracking-tight">
-            {scorecard?.overall_dqi.toFixed(1) || '93.6'}% DQI
+            {(scorecard?.overall_dqi ?? 93.6).toFixed(1)}% DQI
           </h2>
           <p className="text-xs text-blue-200 max-w-xl">
             {scorecard?.quality_grade || 'Grade A - Optimal for Machine Learning Forecasting & Optimization'}.
@@ -172,7 +172,7 @@ export default function DataQualityPage() {
                 <span className="text-slate-400 text-[10px]">{dim.weight}</span>
               </div>
               <div className="text-2xl font-bold text-slate-900">
-                {dim.data?.score?.toFixed(1) || '95.0'}%
+                {(dim.data?.score ?? 95.0).toFixed(1)}%
               </div>
               {/* Progress Bar */}
               <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">

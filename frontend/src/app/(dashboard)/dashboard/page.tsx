@@ -294,10 +294,10 @@ export default function DashboardOverviewPage() {
                 <div>
                   <div className="text-xs font-semibold text-slate-900">{item.medicine_name}</div>
                   <div className="text-[11px] text-slate-500 mt-0.5">
-                    Stock: {item.current_stock} units | DSR: {item.days_of_stock_remaining.toFixed(1)} days
+                    Stock: {item.current_stock ?? 0} units | DSR: {(item.days_of_stock_remaining ?? 0).toFixed(1)} days
                   </div>
                   <div className="text-[11px] text-rose-700 font-medium mt-1">
-                    Risk Probability: {(item.stockout_probability * 100).toFixed(0)}%
+                    Risk Probability: {((item.stockout_probability ?? 0) * 100).toFixed(0)}%
                   </div>
                 </div>
                 <Badge variant={item.risk_level === 'Critical' ? 'danger' : 'warning'}>
@@ -333,11 +333,11 @@ export default function DashboardOverviewPage() {
                     Lot: {item.batch_number} | Exp: {item.expiry_date}
                   </div>
                   <div className="text-[11px] text-amber-800 font-medium mt-1">
-                    PUSE: {item.projected_unused_stock} units ({item.financial_value_at_risk_etb.toLocaleString()} ETB)
+                    PUSE: {item.projected_unused_stock ?? 0} units ({(item.financial_value_at_risk_etb ?? 0).toLocaleString()} ETB)
                   </div>
                 </div>
                 <Badge variant={item.risk_level === 'Critical' ? 'danger' : 'warning'}>
-                  {item.days_until_expiry}d Left
+                  {item.days_until_expiry ?? 0}d Left
                 </Badge>
               </div>
             ))}
@@ -369,11 +369,11 @@ export default function DashboardOverviewPage() {
                     {item.source_facility_name} &rarr; {item.target_facility_name}
                   </div>
                   <div className="text-[11px] text-emerald-700 font-medium mt-1">
-                    Qty: {item.recommended_quantity} units | Net Saved: {item.net_value_saved_etb.toLocaleString()} ETB
+                    Qty: {item.recommended_quantity ?? 0} units | Net Saved: {(item.net_value_saved_etb ?? 0).toLocaleString()} ETB
                   </div>
                 </div>
                 <Badge variant="info">
-                  {item.distance_km} km
+                  {item.distance_km ?? 0} km
                 </Badge>
               </div>
             ))}

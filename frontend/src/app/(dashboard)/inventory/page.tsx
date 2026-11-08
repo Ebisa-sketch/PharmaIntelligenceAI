@@ -193,12 +193,12 @@ export default function InventoryOverviewPage() {
                     {item.facility_name || 'Tikur Anbessa Hospital'}
                   </td>
                   <td className="px-6 py-3.5 font-medium">
-                    <span className={item.current_quantity === 0 ? 'text-rose-600 font-bold' : 'text-slate-900'}>
-                      {item.current_quantity.toLocaleString()} units
+                    <span className={(item.current_quantity ?? 0) === 0 ? 'text-rose-600 font-bold' : 'text-slate-900'}>
+                      {(item.current_quantity ?? 0).toLocaleString()} units
                     </span>
                   </td>
                   <td className="px-6 py-3.5 text-slate-600">
-                    {item.reorder_level.toLocaleString()} units
+                    {(item.reorder_level ?? 0).toLocaleString()} units
                   </td>
                   <td className="px-6 py-3.5 text-slate-600">
                     {item.lead_time_days} days

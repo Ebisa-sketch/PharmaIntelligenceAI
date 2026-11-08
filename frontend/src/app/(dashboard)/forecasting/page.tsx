@@ -173,7 +173,7 @@ export default function DemandForecastingPage() {
             Total Projected Demand
           </div>
           <div className="text-2xl font-bold text-slate-900 mt-1">
-            {forecast?.summary.total_projected_demand.toLocaleString()} units
+            {(forecast?.summary.total_projected_demand ?? 0).toLocaleString()} units
           </div>
           <div className="text-[11px] text-slate-500 mt-0.5">
             Over {horizonDays} days horizon
@@ -185,7 +185,7 @@ export default function DemandForecastingPage() {
             Average Daily Demand
           </div>
           <div className="text-2xl font-bold text-blue-600 mt-1">
-            {forecast?.summary.daily_average_demand.toFixed(1)} units/day
+            {(forecast?.summary.daily_average_demand ?? 0).toFixed(1)} units/day
           </div>
           <div className="text-[11px] text-blue-700 mt-0.5">
             De-censored for stockout gaps
@@ -197,7 +197,7 @@ export default function DemandForecastingPage() {
             Recommended Safety Buffer
           </div>
           <div className="text-2xl font-bold text-emerald-600 mt-1">
-            {forecast?.summary.recommended_safety_stock.toLocaleString()} units
+            {(forecast?.summary.recommended_safety_stock ?? 0).toLocaleString()} units
           </div>
           <div className="text-[11px] text-emerald-700 mt-0.5">
             95% service level protection

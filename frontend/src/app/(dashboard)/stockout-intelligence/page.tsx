@@ -204,33 +204,33 @@ export default function StockoutIntelligencePage() {
                     </div>
                   </td>
                   <td className="px-6 py-3.5 font-bold text-slate-900">
-                    {item.current_stock.toLocaleString()} units
+                    {(item.current_stock ?? 0).toLocaleString()} units
                   </td>
                   <td className="px-6 py-3.5 text-slate-600">
-                    {item.daily_demand_rate.toFixed(1)} / day
+                    {(item.daily_demand_rate ?? 0).toFixed(1)} / day
                   </td>
                   <td className="px-6 py-3.5">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-slate-900">
-                        {item.days_of_stock_remaining.toFixed(1)}d
+                        {(item.days_of_stock_remaining ?? 0).toFixed(1)}d
                       </span>
-                      {item.days_of_stock_remaining < item.lead_time_days && (
+                      {(item.days_of_stock_remaining ?? 0) < (item.lead_time_days ?? 0) && (
                         <span className="text-[10px] text-rose-600 font-semibold">&lt; Lead Time</span>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-3.5 text-slate-600">{item.lead_time_days} days</td>
+                  <td className="px-6 py-3.5 text-slate-600">{item.lead_time_days ?? 25} days</td>
                   <td className="px-6 py-3.5">
                     <span
                       className={`font-bold ${
-                        item.stockout_probability >= 0.7
+                        (item.stockout_probability ?? 0) >= 0.7
                           ? 'text-rose-600'
-                          : item.stockout_probability >= 0.3
+                          : (item.stockout_probability ?? 0) >= 0.3
                           ? 'text-amber-600'
                           : 'text-emerald-600'
                       }`}
                     >
-                      {(item.stockout_probability * 100).toFixed(0)}%
+                      {((item.stockout_probability ?? 0) * 100).toFixed(0)}%
                     </span>
                   </td>
                   <td className="px-6 py-3.5">{getRiskBadge(item.risk_level)}</td>
@@ -282,7 +282,9 @@ export default function StockoutIntelligencePage() {
                         attr.direction === 'increases_risk' ? 'text-rose-600' : 'text-emerald-600'
                       }`}
                     >
-                      {attr.direction === 'increases_risk' ? `+${(attr.impact * 100).toFixed(0)}%` : `-${(Math.abs(attr.impact) * 100).toFixed(0)}%`}
+                      {attr.direction === 'increases_risk'
+                        ? `+${((attr.impact ?? 0) * 100).toFixed(0)}%`
+                        : `-${(Math.abs(attr.impact ?? 0) * 100).toFixed(0)}%`}
                     </span>
                   </div>
                   <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">

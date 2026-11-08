@@ -240,16 +240,16 @@ export default function RedistributionPage() {
                     </div>
                   </td>
                   <td className="px-5 py-3.5 font-bold text-slate-900">
-                    {rec.recommended_quantity.toLocaleString()} units
+                    {(rec.recommended_quantity ?? 0).toLocaleString()} units
                   </td>
                   <td className="px-5 py-3.5 text-slate-600 font-mono">
-                    {rec.distance_km.toFixed(1)} km
+                    {(rec.distance_km ?? 0).toFixed(1)} km
                   </td>
                   <td className="px-5 py-3.5 font-mono text-slate-700">
-                    {rec.transport_cost_etb.toLocaleString()} ETB
+                    {(rec.transport_cost_etb ?? 0).toLocaleString()} ETB
                   </td>
                   <td className="px-5 py-3.5 font-bold text-emerald-600">
-                    +{rec.net_value_saved_etb.toLocaleString()} ETB
+                    +{(rec.net_value_saved_etb ?? 0).toLocaleString()} ETB
                   </td>
                   <td className="px-5 py-3.5">{getStatusBadge(rec.status)}</td>
                   <td className="px-5 py-3.5 text-right space-x-1.5 whitespace-nowrap">
