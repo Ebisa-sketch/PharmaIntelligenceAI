@@ -6,6 +6,8 @@ from app.models.medicine import Medicine
 from app.models.inventory import Inventory
 from app.models.batch import Batch
 from app.models.transaction import InventoryTransaction
+from app.models.data_import import DataImport
+from app.models.data_quality import DataQualityIssue
 from app.models.forecast import Forecast
 from app.models.prediction import Prediction
 from app.models.recommendation import RedistributionRecommendation
@@ -19,6 +21,8 @@ __all__ = [
     "Inventory",
     "Batch",
     "InventoryTransaction",
+    "DataImport",
+    "DataQualityIssue",
     "Forecast",
     "Prediction",
     "RedistributionRecommendation",

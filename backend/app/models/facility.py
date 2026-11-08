@@ -1,5 +1,5 @@
 from typing import List, Optional, TYPE_CHECKING
-from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, Float, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base, TimestampMixin
 
@@ -15,6 +15,11 @@ if TYPE_CHECKING:
 
 class Facility(Base, TimestampMixin):
     __tablename__ = "facilities"
+    __table_args__ = (
+        CheckConstraint("storage_capacity_m3 IS NULL OR storage_capacity_m3 >= 0", name="ck_facility_storage_capacity"),
+        Index("ix_facility_region_type", "region", "facility_type"),
+        Index("ix_facility_code", "code", unique=True),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     code: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)

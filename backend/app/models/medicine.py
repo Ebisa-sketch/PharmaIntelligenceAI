@@ -1,5 +1,5 @@
 from typing import List, Optional, TYPE_CHECKING
-from sqlalchemy import Boolean, Float, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, Float, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base, TimestampMixin
 
@@ -14,6 +14,13 @@ if TYPE_CHECKING:
 
 class Medicine(Base, TimestampMixin):
     __tablename__ = "medicines"
+    __table_args__ = (
+        CheckConstraint("minimum_stock_level >= 0", name="ck_medicine_min_stock_non_negative"),
+        CheckConstraint("reorder_point >= 0", name="ck_medicine_reorder_point_non_negative"),
+        CheckConstraint("lead_time_days >= 0", name="ck_medicine_lead_time_non_negative"),
+        Index("ix_medicine_category_vital", "category", "vital_classification"),
+        Index("ix_medicine_code", "code", unique=True),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     code: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)

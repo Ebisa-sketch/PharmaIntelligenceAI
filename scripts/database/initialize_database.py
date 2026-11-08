@@ -1,130 +1,68 @@
 """
 PharmaIntelligence AI - Database Initialization Script
 
-Creates all core tables, indices, and extensions for PostgreSQL / SQLite databases.
+Creates all core tables, constraints, relationships, and indices defined in
+the SQLAlchemy ORM models. Works with both PostgreSQL and SQLite.
 """
 
 from __future__ import annotations
 
 import argparse
+import logging
 import os
 import sys
 
-SCHEMA_SQL = """
--- Extensions (for PostgreSQL)
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+# Ensure backend root is on sys.path
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
+BACKEND_DIR = os.path.join(PROJECT_ROOT, "backend")
+if BACKEND_DIR not in sys.path:
+    sys.path.insert(0, BACKEND_DIR)
 
--- 1. Facilities
-CREATE TABLE IF NOT EXISTS facilities (
-    facility_id VARCHAR(32) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    facility_type VARCHAR(50) NOT NULL, -- Hospital, Retail, Warehouse, Clinic
-    address VARCHAR(255),
-    city VARCHAR(100),
-    region VARCHAR(100),
-    latitude NUMERIC(9, 6),
-    longitude NUMERIC(9, 6),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+from app.core.config import settings
+from app.database.base import Base
+from app.database.connection import engine
+import app.models  # Registers all 13 models on Base.metadata
 
--- 2. Medicines Catalog
-CREATE TABLE IF NOT EXISTS medicines (
-    medicine_id VARCHAR(32) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    generic_name VARCHAR(255) NOT NULL,
-    brand_name VARCHAR(255),
-    atc_code VARCHAR(10) NOT NULL,
-    ndc_code VARCHAR(32),
-    dosage_form VARCHAR(50) NOT NULL,
-    strength VARCHAR(50) NOT NULL,
-    unit_of_measure VARCHAR(20) NOT NULL,
-    therapeutic_class VARCHAR(100) NOT NULL,
-    is_prescription_required BOOLEAN DEFAULT TRUE,
-    storage_condition VARCHAR(100),
-    standard_pack_size INTEGER DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 3. Inventory Status
-CREATE TABLE IF NOT EXISTS inventory (
-    inventory_id VARCHAR(32) PRIMARY KEY,
-    facility_id VARCHAR(32) NOT NULL REFERENCES facilities(facility_id) ON DELETE CASCADE,
-    medicine_id VARCHAR(32) NOT NULL REFERENCES medicines(medicine_id) ON DELETE CASCADE,
-    stock_on_hand INTEGER NOT NULL DEFAULT 0,
-    stock_reserved INTEGER NOT NULL DEFAULT 0,
-    stock_in_transit INTEGER NOT NULL DEFAULT 0,
-    reorder_level INTEGER NOT NULL DEFAULT 0,
-    reorder_quantity INTEGER NOT NULL DEFAULT 100,
-    safety_stock INTEGER NOT NULL DEFAULT 0,
-    unit_cost NUMERIC(10, 2),
-    selling_price NUMERIC(10, 2),
-    average_daily_consumption NUMERIC(8, 2) DEFAULT 0.0,
-    lead_time_days INTEGER DEFAULT 7,
-    last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_facility_medicine UNIQUE (facility_id, medicine_id)
-);
-
--- 4. Batches & Expiry Tracking
-CREATE TABLE IF NOT EXISTS batches (
-    batch_id VARCHAR(32) PRIMARY KEY,
-    batch_number VARCHAR(64) NOT NULL,
-    medicine_id VARCHAR(32) NOT NULL REFERENCES medicines(medicine_id) ON DELETE CASCADE,
-    facility_id VARCHAR(32) NOT NULL REFERENCES facilities(facility_id) ON DELETE CASCADE,
-    supplier_id VARCHAR(32),
-    manufacturing_date DATE NOT NULL,
-    expiration_date DATE NOT NULL,
-    initial_quantity INTEGER NOT NULL,
-    remaining_quantity INTEGER NOT NULL,
-    unit_purchase_cost NUMERIC(10, 2),
-    status VARCHAR(32) DEFAULT 'Active',
-    storage_location VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 5. Demand & Dispensing History
-CREATE TABLE IF NOT EXISTS dispensing_events (
-    event_id VARCHAR(32) PRIMARY KEY,
-    facility_id VARCHAR(32) NOT NULL REFERENCES facilities(facility_id),
-    medicine_id VARCHAR(32) NOT NULL REFERENCES medicines(medicine_id),
-    batch_id VARCHAR(32) REFERENCES batches(batch_id),
-    quantity_dispensed INTEGER NOT NULL,
-    dispensed_at TIMESTAMP NOT NULL,
-    patient_category VARCHAR(50),
-    stockout_prevented BOOLEAN DEFAULT FALSE
-);
-
--- Indices for rapid query performance
-CREATE INDEX IF NOT EXISTS idx_inv_medicine ON inventory(medicine_id);
-CREATE INDEX IF NOT EXISTS idx_inv_facility ON inventory(facility_id);
-CREATE INDEX IF NOT EXISTS idx_batches_expiry ON batches(expiration_date, status);
-CREATE INDEX IF NOT EXISTS idx_dispensing_time ON dispensing_events(medicine_id, facility_id, dispensed_at);
-"""
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger("db_init")
 
 
-def initialize_db(database_url: str):
-    print(f"[*] Initializing database connection: {database_url}")
-    try:
-        from sqlalchemy import create_engine, text
-        engine = create_engine(database_url)
-        with engine.connect() as conn:
-            for statement in SCHEMA_SQL.split(";"):
-                stmt = statement.strip()
-                if stmt:
-                    conn.execute(text(stmt))
-            conn.commit()
-        print("[✓] All database schemas and indices created successfully.")
-    except ImportError:
-        print("[!] SQLAlchemy is required to run initialize_database.py directly.", file=sys.stderr)
-        print("[*] Outputting SQL schema script for manual execution:")
-        print(SCHEMA_SQL)
+def initialize_database(drop_first: bool = False) -> None:
+    """Create all tables in the database using Base.metadata."""
+    logger.info("Initializing database with URL: %s", settings.DATABASE_URL.split("@")[-1])
+
+    if drop_first:
+        logger.warning("Dropping all existing tables...")
+        Base.metadata.drop_all(bind=engine)
+        logger.info("Tables dropped successfully.")
+
+    logger.info("Creating all tables, constraints, and indexes...")
+    Base.metadata.create_all(bind=engine)
+
+    tables = list(Base.metadata.tables.keys())
+    logger.info("Successfully initialized %d tables:", len(tables))
+    for idx, table_name in enumerate(sorted(tables), start=1):
+        tbl = Base.metadata.tables[table_name]
+        cols = len(tbl.columns)
+        fks = len(tbl.foreign_keys)
+        indexes = len(tbl.indexes)
+        constraints = len(tbl.constraints)
+        logger.info(
+            "  %2d. %-32s (%d columns, %d foreign keys, %d indexes, %d constraints)",
+            idx, table_name, cols, fks, indexes, constraints
+        )
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Initialize PharmaIntelligence AI database tables")
-    parser.add_argument("--db-url", default=os.getenv("DATABASE_URL", "sqlite:///./pharmaintelligence.db"),
-                        help="Database connection URL (PostgreSQL or SQLite)")
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Initialize PharmaIntelligence AI Database")
+    parser.add_argument(
+        "--drop",
+        action="store_true",
+        help="Drop all existing tables before recreating (Destructive!)",
+    )
     args = parser.parse_args()
-    initialize_db(args.db_url)
+    initialize_database(drop_first=args.drop)
 
 
 if __name__ == "__main__":

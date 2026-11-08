@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, TYPE_CHECKING
-from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base, TimestampMixin
 
@@ -13,20 +13,27 @@ if TYPE_CHECKING:
 
 class RedistributionRecommendation(Base, TimestampMixin):
     __tablename__ = "redistribution_recommendations"
+    __table_args__ = (
+        CheckConstraint("quantity_recommended > 0", name="ck_rec_quantity_positive"),
+        CheckConstraint("source_facility_id != target_facility_id", name="ck_rec_distinct_facilities"),
+        Index("ix_rec_facilities_status", "source_facility_id", "target_facility_id", "status"),
+        Index("ix_rec_status_priority", "status", "priority"),
+        Index("ix_rec_medicine", "medicine_id"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    source_facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("facilities.id"), nullable=False)
-    target_facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("facilities.id"), nullable=False)
-    medicine_id: Mapped[int] = mapped_column(Integer, ForeignKey("medicines.id"), nullable=False)
-    batch_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("batches.id"), nullable=True)
+    source_facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("facilities.id"), nullable=False, index=True)
+    target_facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("facilities.id"), nullable=False, index=True)
+    medicine_id: Mapped[int] = mapped_column(Integer, ForeignKey("medicines.id"), nullable=False, index=True)
+    batch_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("batches.id"), nullable=True, index=True)
     quantity_recommended: Mapped[float] = mapped_column(Float, nullable=False)
     transport_distance_km: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     estimated_transfer_cost_etb: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     prevented_wastage_cost_etb: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     status: Mapped[str] = mapped_column(String(50), default="Pending", index=True, nullable=False)  # Pending, Approved, Rejected, In_Transit, Completed
-    priority: Mapped[str] = mapped_column(String(50), default="Medium", nullable=False)  # High, Medium, Low
+    priority: Mapped[str] = mapped_column(String(50), default="Medium", nullable=False, index=True)  # High, Medium, Low
     rationale: Mapped[str] = mapped_column(Text, nullable=False)
-    reviewed_by: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    reviewed_by: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id"), nullable=True, index=True)
     reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     source_facility: Mapped["Facility"] = relationship(

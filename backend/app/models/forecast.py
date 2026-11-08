@@ -1,6 +1,6 @@
 from datetime import date
 from typing import Optional, TYPE_CHECKING
-from sqlalchemy import Date, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import CheckConstraint, Date, Float, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base, TimestampMixin
 
@@ -11,12 +11,17 @@ if TYPE_CHECKING:
 
 class Forecast(Base, TimestampMixin):
     __tablename__ = "forecasts"
+    __table_args__ = (
+        Index("ix_forecast_facility_medicine_period", "facility_id", "medicine_id", "target_period_start"),
+        Index("ix_forecast_model_date", "model_type", "forecast_date"),
+        CheckConstraint("forecast_value >= 0", name="ck_forecast_value_non_negative"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("facilities.id"), nullable=False)
-    medicine_id: Mapped[int] = mapped_column(Integer, ForeignKey("medicines.id"), nullable=False)
-    model_type: Mapped[str] = mapped_column(String(100), nullable=False)  # Ensemble, LightGBM, SARIMAX, Prophet
-    forecast_date: Mapped[date] = mapped_column(Date, nullable=False)
+    facility_id: Mapped[int] = mapped_column(Integer, ForeignKey("facilities.id", ondelete="CASCADE"), nullable=False, index=True)
+    medicine_id: Mapped[int] = mapped_column(Integer, ForeignKey("medicines.id", ondelete="CASCADE"), nullable=False, index=True)
+    model_type: Mapped[str] = mapped_column(String(100), nullable=False, index=True)  # Ensemble, LightGBM, SARIMAX, Prophet
+    forecast_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
     target_period_start: Mapped[date] = mapped_column(Date, nullable=False)
     target_period_end: Mapped[date] = mapped_column(Date, nullable=False)
     forecast_value: Mapped[float] = mapped_column(Float, nullable=False)
