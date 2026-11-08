@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FacilityRecord",
+  "description": "Validation schema for Ethiopian healthcare facilities master records",
+  "type": "object",
+  "required": [
+    "code",
+    "name",
+    "facility_type",
+    "region"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 32,
+      "description": "Unique identifier code (e.g. ETH-AA-TASH-01)"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 150,
+      "description": "Full formal name of the healthcare facility"
+    },
+    "facility_type": {
+      "type": "string",
+      "enum": [
+        "Specialized Referral Hospital",
+        "General Hospital",
+        "Primary Hospital",
+        "Health Center",
+        "Health Post",
+        "Regional Warehouse",
+        "EPSS Hub"
+      ]
+    },
+    "region": {
+      "type": "string",
+      "description": "Ethiopian administrative region (e.g., Addis Ababa, Oromia, Amhara, Sidama, Tigray)"
+    },
+    "zone": {
+      "type": "string"
+    },
+    "woreda": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number",
+      "minimum": 3.0,
+      "maximum": 15.0
+    },
+    "longitude": {
+      "type": "number",
+      "minimum": 33.0,
+      "maximum": 48.0
+    },
+    "catchment_population": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "monthly_budget_etb": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}
+

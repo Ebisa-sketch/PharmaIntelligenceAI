@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "InventoryTransactionRecord",
+  "description": "Validation schema for pharmacy bin-card inventory transaction ledgers",
+  "type": "object",
+  "required": [
+    "facility_code",
+    "medicine_code",
+    "transaction_type",
+    "quantity",
+    "transaction_date"
+  ],
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "Optional unique external identifier for the transaction"
+    },
+    "facility_code": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 32,
+      "description": "Official healthcare facility code (e.g., ETH-AA-TASH-01)"
+    },
+    "medicine_code": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 32,
+      "description": "Standard NEML or facility medicine code (e.g., MED-AMOX-500)"
+    },
+    "batch_number": {
+      "type": "string",
+      "description": "Batch or lot number associated with the transaction"
+    },
+    "transaction_type": {
+      "type": "string",
+      "enum": [
+        "RECEIPT",
+        "DISPENSATION",
+        "ADJUSTMENT_POSITIVE",
+        "ADJUSTMENT_NEGATIVE",
+        "TRANSFER_IN",
+        "TRANSFER_OUT",
+        "WASTAGE",
+        "EXPIRY"
+      ],
+      "description": "Standard inventory movement classification"
+    },
+    "quantity": {
+      "type": "number",
+      "minimum": 0.01,
+      "description": "Quantity moved or recorded (must be strictly positive; direction determined by type)"
+    },
+    "transaction_date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 transaction date (YYYY-MM-DD)"
+    },
+    "unit_cost_etb": {
+      "type": "number",
+      "minimum": 0.0,
+      "description": "Unit cost in Ethiopian Birr (ETB)"
+    },
+    "reference_document": {
+      "type": "string",
+      "description": "Voucher, requisition, or STV (Store Transfer Voucher) number"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Human-readable notes or justification"
+    }
+  }
+}
+

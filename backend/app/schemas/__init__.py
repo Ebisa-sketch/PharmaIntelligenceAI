@@ -6,6 +6,8 @@ from app.schemas.medicine import MedicineBase, MedicineCreate, MedicineUpdate, M
 from app.schemas.inventory import InventoryBase, InventoryUpdate, InventoryResponse, TransactionCreate, TransactionResponse
 from app.schemas.forecasting import ForecastRequest, ForecastResponse, StockoutRiskResponse, ExpiryRiskResponse
 from app.schemas.recommendation import RedistributionRequest, RedistributionStatusUpdate, RedistributionOptimizationRun, RedistributionResponse
+from app.schemas.data_import import DataImportResponse, DataImportDetailResponse, IngestionPreviewResult, DataQualityIssueSummary
+from app.schemas.data_quality import DataQualityAssessmentResponse, DataQualityIssueItem, DataQualityIssueFilter, IssueResolutionRequest
 
 __all__ = [
     "Token",
@@ -41,4 +43,12 @@ __all__ = [
     "RedistributionStatusUpdate",
     "RedistributionOptimizationRun",
     "RedistributionResponse",
+    "DataImportResponse",
+    "DataImportDetailResponse",
+    "IngestionPreviewResult",
+    "DataQualityIssueSummary",
+    "DataQualityAssessmentResponse",
+    "DataQualityIssueItem",
+    "DataQualityIssueFilter",
+    "IssueResolutionRequest",
 ]
