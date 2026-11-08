@@ -43,6 +43,7 @@ coverage/
 frontend/.next/
 out/
 frontend/out/
+*.tsbuildinfo
 build_frontend.js
 *.pem
 
