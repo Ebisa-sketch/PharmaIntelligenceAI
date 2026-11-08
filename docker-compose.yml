@@ -16,8 +16,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: ../deployment/docker/backend.Dockerfile
+      context: .
+      dockerfile: deployment/docker/backend.Dockerfile
     container_name: pharmaintelligence_backend
     restart: always
     environment:
@@ -28,14 +28,14 @@ services:
     depends_on:
       - db
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend
       - ./data:/app/data
       - ./models:/app/models
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: ../deployment/docker/frontend.Dockerfile
+      context: .
+      dockerfile: deployment/docker/frontend.Dockerfile
     container_name: pharmaintelligence_frontend
     restart: always
     environment:
