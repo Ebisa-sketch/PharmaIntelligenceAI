@@ -131,25 +131,25 @@ export default function TransactionsLedgerPage() {
               {filteredTransactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-slate-50/60 transition-colors">
                   <td className="px-6 py-3.5 font-mono text-slate-500 text-[11px]">
-                    {new Date(tx.created_at).toLocaleString()}
+                    {tx.created_at ? new Date(tx.created_at).toLocaleString() : '—'}
                   </td>
                   <td className="px-6 py-3.5 font-mono font-medium text-slate-800">
                     {tx.reference_number || `TX-${tx.id}`}
                   </td>
                   <td className="px-6 py-3.5 font-medium text-slate-900">
-                    {tx.medicine_name}
+                    {tx.medicine_name || `Medicine #${tx.medicine_id}`}
                   </td>
                   <td className="px-6 py-3.5 text-slate-600">
                     {tx.facility_name || 'Tikur Anbessa Hospital'}
                   </td>
                   <td className="px-6 py-3.5">{getTypeBadge(tx.transaction_type)}</td>
                   <td className="px-6 py-3.5 font-semibold">
-                    <span className={tx.quantity > 0 ? 'text-emerald-600' : 'text-rose-600'}>
-                      {tx.quantity > 0 ? `+${tx.quantity}` : tx.quantity}
+                    <span className={(tx.quantity ?? 0) > 0 ? 'text-emerald-600' : 'text-rose-600'}>
+                      {(tx.quantity ?? 0) > 0 ? `+${tx.quantity}` : (tx.quantity ?? 0)}
                     </span>
                   </td>
                   <td className="px-6 py-3.5 font-bold text-slate-900">
-                    {tx.balance_after.toLocaleString()}
+                    {(tx.balance_after ?? 0).toLocaleString()}
                   </td>
                 </tr>
               ))}

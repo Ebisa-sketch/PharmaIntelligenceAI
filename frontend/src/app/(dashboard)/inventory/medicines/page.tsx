@@ -138,9 +138,9 @@ export default function MedicinesCatalogPage() {
                   </td>
                   <td className="px-6 py-3.5">{getVitalBadge(m.vital_classification)}</td>
                   <td className="px-6 py-3.5 font-medium text-slate-800">
-                    {m.minimum_stock_level.toLocaleString()} {m.unit_of_measure}
+                    {(m.minimum_stock_level ?? 0).toLocaleString()} {m.unit_of_measure}
                   </td>
-                  <td className="px-6 py-3.5 text-slate-600">{m.lead_time_days} days</td>
+                  <td className="px-6 py-3.5 text-slate-600">{m.lead_time_days ?? 0} days</td>
                 </tr>
               ))}
             </tbody>

@@ -282,9 +282,7 @@ export default function StockoutIntelligencePage() {
                         attr.direction === 'increases_risk' ? 'text-rose-600' : 'text-emerald-600'
                       }`}
                     >
-                      {attr.direction === 'increases_risk'
-                        ? `+${((attr.impact ?? 0) * 100).toFixed(0)}%`
-                        : `-${(Math.abs(attr.impact ?? 0) * 100).toFixed(0)}%`}
+                      {attr.direction === 'increases_risk' ? `+${((attr.impact ?? 0) * 100).toFixed(0)}%` : `-${(Math.abs(attr.impact ?? 0) * 100).toFixed(0)}%`}
                     </span>
                   </div>
                   <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
@@ -292,7 +290,7 @@ export default function StockoutIntelligencePage() {
                       className={`h-full rounded-full ${
                         attr.direction === 'increases_risk' ? 'bg-rose-500' : 'bg-emerald-500'
                       }`}
-                      style={{ width: `${Math.min(100, Math.abs(attr.impact) * 100 * 2)}%` }}
+                      style={{ width: `${Math.min(100, Math.abs(attr.impact ?? 0) * 100 * 2)}%` }}
                     />
                   </div>
                 </div>

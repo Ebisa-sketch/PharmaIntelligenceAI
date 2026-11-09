@@ -138,10 +138,10 @@ export default function BatchesPage() {
                     {b.expiry_date}
                   </td>
                   <td className="px-6 py-3.5 font-semibold text-slate-900">
-                    {b.current_quantity.toLocaleString()} units
+                    {(b.current_quantity ?? 0).toLocaleString()} units
                   </td>
                   <td className="px-6 py-3.5 font-medium text-slate-800">
-                    {b.unit_cost.toFixed(2)} ETB
+                    {(b.unit_cost ?? 0).toFixed(2)} ETB
                   </td>
                   <td className="px-6 py-3.5">
                     {getExpiryBadge(b.days_to_expiry)}

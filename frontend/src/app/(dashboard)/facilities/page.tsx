@@ -109,12 +109,12 @@ export default function FacilitiesDirectoryPage() {
               </div>
               <div className="flex items-center gap-1.5">
                 <HardDrive className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span>{f.storage_capacity_m3.toLocaleString()} m³ capacity</span>
+                <span>{(f.storage_capacity_m3 ?? 0).toLocaleString()} m³ capacity</span>
               </div>
             </div>
 
             <div className="text-[11px] text-slate-400 font-mono">
-              GPS Coordinates: {f.latitude.toFixed(4)}°N, {f.longitude.toFixed(4)}°E
+              GPS Coordinates: {(f.latitude ?? 0).toFixed(4)}°N, {(f.longitude ?? 0).toFixed(4)}°E
             </div>
           </div>
         ))}
