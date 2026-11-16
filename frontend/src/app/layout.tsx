@@ -3,8 +3,8 @@ import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
-  title: 'PharmaIntelligence AI - Ethiopian Pharmaceutical Intelligence System',
-  description: 'AI Decision-Support System for Stockout Risk, Expiry Prevention, and Inventory Redistribution in Ethiopian Healthcare Facilities',
+  title: 'PharmaIntelligence AI | Pharmaceutical Supply Intelligence',
+  description: 'An explainable AI-powered decision-support platform for medicine demand forecasting, stockout risk intelligence, expiry prevention, and inventory redistribution.',
 };
 
 export default function RootLayout({

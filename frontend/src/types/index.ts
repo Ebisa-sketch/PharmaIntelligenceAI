@@ -275,3 +275,54 @@ export interface SystemSummary {
   average_dqi_score: number;
 }
 
+export interface AuditLogEntry {
+  id: number;
+  user_id?: number | null;
+  user_email?: string | null;
+  action: string;
+  entity_type: string;
+  entity_id?: string | number | null;
+  details?: Record<string, any> | string | null;
+  ip_address?: string | null;
+  timestamp: string;
+}
+
+export interface ExperimentRun {
+  experiment_id: string;
+  name: string;
+  status: 'Completed' | 'Running' | 'Queued' | 'Failed';
+  evaluation_metrics: {
+    baseline_mape?: number;
+    ai_ensemble_mape?: number;
+    stockout_reduction_pct?: number;
+    expiry_reduction_pct?: number;
+    feature_stability_score?: number;
+    mean_explanation_latency_ms?: number;
+    wape?: number;
+    mase?: number;
+  };
+  timestamp: string;
+}
+
+export interface FacilityReport {
+  facility_id: number;
+  facility_name: string;
+  region: string;
+  total_tracked_medicines: number;
+  stockout_count: number;
+  understocked_count: number;
+  total_active_batches: number;
+}
+
+export interface SystemSettings {
+  auto_reorder_enabled: boolean;
+  donor_safety_stock_buffer_days: number;
+  max_transfer_radius_km: number;
+  stockout_alert_threshold_dsr: number;
+  expiry_warning_threshold_days: number;
+  fefo_strict_mode: boolean;
+  sms_alert_notifications: boolean;
+  email_digest_frequency: 'Daily' | 'Weekly' | 'Realtime';
+}
+
+
