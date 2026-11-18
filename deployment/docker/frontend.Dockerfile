@@ -21,6 +21,7 @@ COPY frontend ./
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV NEXT_OUTPUT_MODE=standalone
 
 RUN npm run build
 
