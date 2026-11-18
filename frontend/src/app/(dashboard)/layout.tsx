@@ -134,7 +134,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50 text-slate-900 font-sans">
+    <div className="h-screen w-screen overflow-hidden flex bg-slate-50 text-slate-900 font-sans">
       {/* Mobile Backdrop */}
       {mobileMenuOpen && (
         <div
@@ -145,9 +145,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-slate-900 text-slate-100 flex flex-col border-r border-slate-800 transition-all duration-200 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 h-screen bg-slate-900 text-slate-100 flex flex-col border-r border-slate-800 transition-all duration-200 lg:translate-x-0 ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:static ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'} w-64`}
+        } lg:static lg:h-screen lg:shrink-0 ${desktopCollapsed ? 'lg:w-20' : 'lg:w-64'} w-64`}
       >
         {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-4 sm:px-6 border-b border-slate-800 bg-slate-950/40">
@@ -271,9 +271,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+        <header className="h-16 shrink-0 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between z-30 shadow-xs">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileMenuOpen(true)}
