@@ -51,7 +51,7 @@ profile = "black"
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = [".", ".."]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 addopts = "-v --strict-markers"
