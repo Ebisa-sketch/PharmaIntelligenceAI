@@ -15,6 +15,7 @@ from app.api.v1.endpoints import (
     experiments,
     reports,
     audit_logs,
+    notifications,
 )
 
 api_router = APIRouter()
@@ -34,3 +35,4 @@ api_router.include_router(redistribution.router, prefix="/redistribution", tags=
 api_router.include_router(experiments.router, prefix="/experiments", tags=["Research & Experiments"])
 api_router.include_router(reports.router, prefix="/reports", tags=["Reports & Analytics"])
 api_router.include_router(audit_logs.router, prefix="/audit-logs", tags=["Audit & Governance"])
+api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])

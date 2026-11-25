@@ -4,51 +4,50 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.api.dependencies import get_current_user
 from app.models.user import User
+from app.services.experiment_service import ExperimentService
 
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", summary="List historical and active model experiments")
 def list_experiments(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> List[Dict[str, Any]]:
     """Lists completed and active AI model evaluation and benchmarking experiments."""
-    return [
-        {
-            "experiment_id": "EXP-ETH-001",
-            "name": "Ensemble Demand Forecasting vs SARIMAX Baseline",
-            "status": "Completed",
-            "evaluation_metrics": {
-                "baseline_mape": 24.3,
-                "ai_ensemble_mape": 11.4,
-                "stockout_reduction_pct": 34.2,
-                "expiry_reduction_pct": 28.7,
-            },
-            "timestamp": "2026-10-15T10:00:00Z"
-        },
-        {
-            "experiment_id": "EXP-ETH-002",
-            "name": "Explainable Feature Attribution (SHAP) Fidelity Benchmark",
-            "status": "Completed",
-            "evaluation_metrics": {
-                "feature_stability_score": 0.91,
-                "mean_explanation_latency_ms": 42.0,
-            },
-            "timestamp": "2026-11-01T14:30:00Z"
-        }
-    ]
+    service = ExperimentService(db)
+    return service.list_experiments()
 
 
-@router.post("/run")
+@router.get("/models", summary="List registered AI models and technical metadata")
+def list_models(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> List[Dict[str, Any]]:
+    """Returns the production and staging AI model registry with hyperparameters and provenance."""
+    service = ExperimentService(db)
+    return service.list_models()
+
+
+@router.get("/benchmarks", summary="Retrieve formal baseline vs candidate model comparisons")
+def get_benchmarks(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """
+    Returns comparative evaluation metrics against transparent baselines
+    across forecasting, stockout classification, expiry risk, and redistribution.
+    """
+    service = ExperimentService(db)
+    return service.get_benchmarks()
+
+
+@router.post("/run", summary="Trigger reproducible AI benchmark experiment")
 def run_experiment(
     payload: Dict[str, Any],
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> Dict[str, Any]:
-    """Trigger simulated comparative evaluation between baseline and AI-driven supply decisions."""
-    return {
-        "status": "queued",
-        "experiment_id": f"EXP-ETH-{hash(str(payload)) % 10000:04d}",
-        "message": "Evaluation pipeline started in asynchronous background task."
-    }
+    """Executes a comparative evaluation between baseline and AI-driven supply decisions."""
+    service = ExperimentService(db)
+    return service.run_live_experiment(payload)

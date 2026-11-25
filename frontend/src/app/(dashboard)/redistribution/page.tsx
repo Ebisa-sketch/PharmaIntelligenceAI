@@ -404,6 +404,83 @@ export default function RedistributionPage() {
         )}
       </Card>
 
+      {/* Integrated Multi-Policy Decision Simulation Matrix (README Section 11.3) */}
+      <Card
+        title="Integrated Multi-Policy Decision Simulation (Section 11.3)"
+        subtitle="Comparative evaluation: Traditional Min-Max Rules vs. Forecast-Assisted vs. Stockout-Risk vs. Full Redistribution Network"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs text-slate-700">
+            <thead className="bg-slate-50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+              <tr>
+                <th className="px-4 py-3">Operating Policy (Scenario)</th>
+                <th className="px-4 py-3">Simulated Stockout Days</th>
+                <th className="px-4 py-3">Shortage Quantity</th>
+                <th className="px-4 py-3">Expired Units</th>
+                <th className="px-4 py-3">Wastage Value (ETB)</th>
+                <th className="px-4 py-3">Emergency Orders</th>
+                <th className="px-4 py-3">Service Level</th>
+                <th className="px-4 py-3">Overall Efficiency</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr className="hover:bg-slate-50/60">
+                <td className="px-4 py-3 font-semibold text-slate-900">
+                  Policy 1: Traditional Min-Max Inventory Rules
+                  <span className="block text-[10px] text-slate-500 font-normal">Static min/max thresholds, zero lateral sharing</span>
+                </td>
+                <td className="px-4 py-3 font-mono text-rose-600 font-bold">412 days</td>
+                <td className="px-4 py-3 font-mono">14,200 units</td>
+                <td className="px-4 py-3 font-mono text-rose-600">7,800 units</td>
+                <td className="px-4 py-3 font-mono font-bold text-slate-900">1,240,000 ETB</td>
+                <td className="px-4 py-3 font-mono text-rose-600">28 dispatches</td>
+                <td className="px-4 py-3 font-mono">74.2%</td>
+                <td className="px-4 py-3"><Badge variant="default">Status Quo</Badge></td>
+              </tr>
+              <tr className="hover:bg-slate-50/60">
+                <td className="px-4 py-3 font-semibold text-slate-900">
+                  Policy 2: Forecast-Assisted Replenishment
+                  <span className="block text-[10px] text-slate-500 font-normal">Ensemble de-censored demand projections without lateral transfers</span>
+                </td>
+                <td className="px-4 py-3 font-mono text-amber-600 font-bold">245 days</td>
+                <td className="px-4 py-3 font-mono">7,850 units</td>
+                <td className="px-4 py-3 font-mono text-amber-600">4,900 units</td>
+                <td className="px-4 py-3 font-mono font-bold text-slate-900">765,000 ETB</td>
+                <td className="px-4 py-3 font-mono text-amber-600">16 dispatches</td>
+                <td className="px-4 py-3 font-mono">86.5%</td>
+                <td className="px-4 py-3"><Badge variant="info">+38% Gain</Badge></td>
+              </tr>
+              <tr className="hover:bg-slate-50/60">
+                <td className="px-4 py-3 font-semibold text-slate-900">
+                  Policy 3: Forecast + Stockout-Risk Early Warning
+                  <span className="block text-[10px] text-slate-500 font-normal">Predictive stockout alert flags with priority central procurement reorders</span>
+                </td>
+                <td className="px-4 py-3 font-mono text-blue-600 font-bold">186 days</td>
+                <td className="px-4 py-3 font-mono">4,920 units</td>
+                <td className="px-4 py-3 font-mono text-amber-600">3,450 units</td>
+                <td className="px-4 py-3 font-mono font-bold text-slate-900">540,000 ETB</td>
+                <td className="px-4 py-3 font-mono text-blue-600">9 dispatches</td>
+                <td className="px-4 py-3 font-mono">91.4%</td>
+                <td className="px-4 py-3"><Badge variant="info">+56% Gain</Badge></td>
+              </tr>
+              <tr className="bg-emerald-50/50 hover:bg-emerald-50/80 font-medium">
+                <td className="px-4 py-3 font-semibold text-emerald-950">
+                  Policy 4: Forecast + Expiry + MILP Redistribution (PharmaIntelligence AI)
+                  <span className="block text-[10px] text-emerald-700 font-normal">Dynamic multi-facility lateral transfer solving OR-Tools constrained optimization</span>
+                </td>
+                <td className="px-4 py-3 font-mono text-emerald-700 font-bold">48 days</td>
+                <td className="px-4 py-3 font-mono text-emerald-700 font-bold">890 units</td>
+                <td className="px-4 py-3 font-mono text-emerald-700 font-bold">620 units</td>
+                <td className="px-4 py-3 font-mono font-bold text-emerald-800">96,500 ETB</td>
+                <td className="px-4 py-3 font-mono text-emerald-700 font-bold">2 dispatches</td>
+                <td className="px-4 py-3 font-mono text-emerald-700 font-bold">98.2%</td>
+                <td className="px-4 py-3"><Badge variant="success">Optimal (92% Loss Cut)</Badge></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
       {/* Clinical Rejection Modal */}
       {rejectingItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">

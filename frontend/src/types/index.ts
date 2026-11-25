@@ -378,6 +378,19 @@ export interface DataImportRecord {
   quality_issues_count?: number;
 }
 
+export interface NotificationItem {
+  id: string;
+  title: string;
+  message: string;
+  severity: 'critical' | 'high' | 'medium' | 'info';
+  timestamp: string;
+  facility: string;
+  category: 'Stockout' | 'Expiry' | 'Quality' | 'Redistribution' | 'Model';
+  isRead: boolean;
+  actionUrl?: string;
+}
+
+
 
 
 

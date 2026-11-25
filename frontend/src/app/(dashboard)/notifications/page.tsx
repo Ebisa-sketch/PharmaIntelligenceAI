@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Bell, 
   AlertTriangle, 
@@ -12,21 +12,12 @@ import {
   Trash2,
   ExternalLink,
   ShieldAlert,
-  Send
+  Send,
+  RefreshCw,
 } from 'lucide-react';
 import DemoAlert from '@/components/ui/DemoAlert';
-
-interface NotificationItem {
-  id: string;
-  title: string;
-  message: string;
-  severity: 'critical' | 'high' | 'medium' | 'info';
-  timestamp: string;
-  facility: string;
-  category: 'Stockout' | 'Expiry' | 'Quality' | 'Redistribution' | 'Model';
-  isRead: boolean;
-  actionUrl?: string;
-}
+import { notificationsApi } from '@/lib/api';
+import { NotificationItem } from '@/types';
 
 const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   {
@@ -90,15 +81,57 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
   const [filterSeverity, setFilterSeverity] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function fetchNotifs() {
+      setIsLoading(true);
+      try {
+        const data = await notificationsApi.list();
+        if (data && data.length > 0) {
+          setNotifications(data);
+        }
+      } catch (e) {
+        console.error('Error fetching notifications:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchNotifs();
+  }, []);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  const handleMarkAsRead = (id: string) => {
+  const handleMarkAsRead = async (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+    try {
+      await notificationsApi.markRead(id);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const handleMarkAllRead = () => {
+  const handleMarkAllRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    try {
+      await notificationsApi.markAllRead();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    try {
+      const data = await notificationsApi.list();
+      if (data && data.length > 0) {
+        setNotifications(data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleClearAll = () => {
@@ -165,6 +198,14 @@ export default function NotificationsPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition disabled:opacity-50"
+            title="Refresh alerts from backend"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? 'animate-spin' : ''}`} /> Refresh
+          </button>
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}

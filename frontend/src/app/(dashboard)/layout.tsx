@@ -35,6 +35,8 @@ import {
   UploadCloud,
 } from 'lucide-react';
 import Tooltip from '@/components/ui/Tooltip';
+import { notificationsApi } from '@/lib/api';
+import { NotificationItem } from '@/types';
 
 interface NavItem {
   name: string;
@@ -117,7 +119,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [liveAlerts, setLiveAlerts] = useState<NotificationItem[]>([]);
   const notifRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function loadAlerts() {
+      try {
+        const notifs = await notificationsApi.list(undefined, 8);
+        if (notifs && notifs.length > 0) {
+          setLiveAlerts(notifs);
+        }
+      } catch (err) {
+        console.error('Failed to load notifications in layout:', err);
+      }
+    }
+    loadAlerts();
+  }, []);
 
   // Close notifications on outside click
   useEffect(() => {
@@ -321,7 +338,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 aria-expanded={notificationsOpen}
               >
                 <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+                {liveAlerts.some(a => !a.isRead) && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+                )}
+                {liveAlerts.some(a => !a.isRead) && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+                )}
               </button>
 
               {/* Notification Popover Dropdown */}
@@ -332,15 +354,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       <Bell className="w-3.5 h-3.5 text-blue-600" /> Priority Alerts
                     </div>
                     <span className="text-[10px] bg-rose-100 text-rose-700 font-bold px-1.5 py-0.5 rounded">
-                      3 Unresolved
+                      {liveAlerts.filter(a => !a.isRead).length || 0} Unresolved
                     </span>
                   </div>
 
                   <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
-                    {QUICK_ALERTS.map((alert) => (
+                    {(liveAlerts.length > 0 ? liveAlerts : QUICK_ALERTS).map((alert: any) => (
                       <Link
                         key={alert.id}
-                        href={alert.href as any}
+                        href={(alert.actionUrl || alert.href || '/notifications') as any}
                         onClick={() => setNotificationsOpen(false)}
                         className="block px-4 py-2.5 hover:bg-slate-50 transition"
                       >
@@ -356,7 +378,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           >
                             {alert.severity}
                           </span>
-                          <span className="text-[10px] text-slate-400">{alert.time}</span>
+                          <span className="text-[10px] text-slate-400">
+                            {alert.timestamp ? new Date(alert.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (alert.time || 'recent')}
+                          </span>
                         </div>
                         <div className="font-semibold text-slate-900 mt-1 truncate">
                           {alert.title}
