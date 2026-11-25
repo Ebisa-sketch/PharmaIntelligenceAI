@@ -325,4 +325,26 @@ export interface SystemSettings {
   email_digest_frequency: 'Daily' | 'Weekly' | 'Realtime';
 }
 
+export interface ScenarioKPI {
+  total_shortages_unmet: number;
+  total_expired_units: number;
+  total_expired_loss_etb: number;
+  total_transferred_units: number;
+  total_transport_cost_etb: number;
+  net_economic_benefit_etb: number;
+  service_level_percent: number;
+}
+
+export interface SimulationScenarioResponse {
+  scenario_type: string;
+  scenario_name: string;
+  description: string;
+  facilities_evaluated: number;
+  medicines_evaluated: number;
+  baseline_kpis: ScenarioKPI;
+  scenario_kpis: ScenarioKPI;
+  improvement_summary: Record<string, any>;
+}
+
+
 
