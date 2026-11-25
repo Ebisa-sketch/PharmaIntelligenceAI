@@ -32,6 +32,7 @@ import {
   Sparkles,
   ExternalLink,
   Info,
+  UploadCloud,
 } from 'lucide-react';
 import Tooltip from '@/components/ui/Tooltip';
 
@@ -52,6 +53,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
       { name: 'NEML Medicines', href: '/inventory/medicines', icon: Layers },
       { name: 'Batch Lot Tracking', href: '/inventory/batches', icon: CalendarClock },
       { name: 'Bin-Card Transactions', href: '/inventory/transactions', icon: History },
+      { name: 'Data & Ledger Import', href: '/inventory/import', icon: UploadCloud },
     ],
   },
   {

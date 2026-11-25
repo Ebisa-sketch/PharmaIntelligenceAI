@@ -346,5 +346,38 @@ export interface SimulationScenarioResponse {
   improvement_summary: Record<string, any>;
 }
 
+export interface IngestionPreviewResult {
+  filename: string;
+  total_rows: number;
+  estimated_valid_rows: number;
+  estimated_rejected_rows: number;
+  preliminary_dq_score: number;
+  detected_headers: string[];
+  sample_rows: Record<string, any>[];
+  preview_issues: Array<{
+    row_number?: number;
+    issue_type: string;
+    severity: string;
+    field_name?: string;
+    description: string;
+  }>;
+}
+
+export interface DataImportRecord {
+  id: number;
+  facility_id: number;
+  facility_name?: string | null;
+  filename: string;
+  file_hash_sha256?: string;
+  total_rows: number;
+  valid_rows: number;
+  rejected_rows: number;
+  dq_score: number;
+  status: string;
+  created_at: string;
+  quality_issues_count?: number;
+}
+
+
 
 

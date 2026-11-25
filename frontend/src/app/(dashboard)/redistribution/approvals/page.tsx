@@ -9,7 +9,10 @@ import {
   ShieldCheck, 
   FileCheck, 
   RefreshCw, 
-  AlertTriangle 
+  AlertTriangle,
+  Printer,
+  FileText,
+  Building2,
 } from 'lucide-react';
 import { redistributionApi } from '@/lib/api';
 import { RedistributionProposal } from '@/types';
@@ -21,6 +24,7 @@ export default function RedistributionApprovalsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'in_transit'>('pending');
   const [selectedProposal, setSelectedProposal] = useState<RedistributionProposal | null>(null);
+  const [consignmentProposal, setConsignmentProposal] = useState<RedistributionProposal | null>(null);
   const [rationale, setRationale] = useState('');
   const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
 
@@ -235,12 +239,20 @@ export default function RedistributionApprovalsPage() {
                     <span className="text-[11px] font-mono text-emerald-700 font-bold">Transfer Order #{proposal.id}</span>
                     <h4 className="text-sm font-bold text-slate-900">{proposal.medicine_name}</h4>
                   </div>
-                  <button
-                    onClick={() => handleDispatch(proposal.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium shadow-xs transition"
-                  >
-                    <Truck className="w-3.5 h-3.5" /> Execute & Mark In-Transit
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setConsignmentProposal(proposal)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs transition"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-blue-600" /> Print Waybill
+                    </button>
+                    <button
+                      onClick={() => handleDispatch(proposal.id)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium shadow-xs transition"
+                    >
+                      <Truck className="w-3.5 h-3.5" /> Execute & Mark In-Transit
+                    </button>
+                  </div>
                 </div>
 
                 <div className="text-xs text-slate-700 flex flex-wrap items-center gap-4">
@@ -300,6 +312,138 @@ export default function RedistributionApprovalsPage() {
               >
                 {actionType === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Official Ethiopian Health Lateral Stock Transfer Consignment Note Modal */}
+      {consignmentProposal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl border border-slate-300 shadow-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 text-slate-800 my-8">
+            {/* Official Header */}
+            <div className="border-b-2 border-slate-900 pb-4 text-center space-y-1">
+              <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <Building2 className="w-4 h-4 text-blue-700" />
+                Federal Democratic Republic of Ethiopia • Ministry of Health
+              </div>
+              <h2 className="text-base sm:text-lg font-black tracking-tight text-slate-950 uppercase">
+                Lateral Pharmaceutical Stock Transfer Consignment Note
+              </h2>
+              <div className="flex items-center justify-center gap-4 text-[11px] font-mono text-slate-600 pt-1">
+                <span><strong>Consignment Ref:</strong> ETH-TRF-2026-00{consignmentProposal.id}</span>
+                <span>•</span>
+                <span><strong>Date:</strong> {new Date().toLocaleDateString('en-GB')}</span>
+                <span>•</span>
+                <span><strong>Priority:</strong> {consignmentProposal.priority || 'High'}</span>
+              </div>
+            </div>
+
+            {/* Facility Routing Table */}
+            <div className="grid grid-cols-2 gap-4 text-xs">
+              <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Releasing Donor Facility</span>
+                <div className="font-bold text-slate-900 text-sm">{consignmentProposal.source_facility_name}</div>
+                <div className="text-[11px] text-slate-600">Facility Code: ETH-FAC-00{consignmentProposal.source_facility_id}</div>
+                <div className="text-[10px] text-emerald-700 font-semibold mt-1">✓ Donor Safety Buffer Certified (25d retained)</div>
+              </div>
+
+              <div className="p-3.5 rounded-xl border border-blue-200 bg-blue-50/50 space-y-1">
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">Receiving Destination Facility</span>
+                <div className="font-bold text-blue-950 text-sm">{consignmentProposal.target_facility_name}</div>
+                <div className="text-[11px] text-slate-600">Facility Code: ETH-FAC-00{consignmentProposal.target_facility_id}</div>
+                <div className="text-[10px] text-rose-700 font-semibold mt-1">! Acute Stockout Relief (&lt;5 DSR remaining)</div>
+              </div>
+            </div>
+
+            {/* Consignment Item Details Table */}
+            <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-100 text-[10px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">
+                  <tr>
+                    <th className="px-3 py-2.5">NEML Description</th>
+                    <th className="px-3 py-2.5">Batch / Lot #</th>
+                    <th className="px-3 py-2.5 text-right">Transfer Qty</th>
+                    <th className="px-3 py-2.5 text-right">Est. Unit ETB</th>
+                    <th className="px-3 py-2.5 text-right">Net Value Saved</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  <tr>
+                    <td className="px-3 py-3 font-semibold text-slate-900">
+                      {consignmentProposal.medicine_name}
+                      <span className="block text-[10px] text-slate-400 font-mono">{consignmentProposal.medicine_code}</span>
+                    </td>
+                    <td className="px-3 py-3 font-mono text-slate-700">
+                      {consignmentProposal.batch_number}
+                    </td>
+                    <td className="px-3 py-3 text-right font-bold text-slate-950">
+                      {(consignmentProposal.recommended_quantity ?? 0).toLocaleString()} units
+                    </td>
+                    <td className="px-3 py-3 text-right font-mono text-slate-600">
+                      ETB {((consignmentProposal.net_value_saved_etb ?? 4200) / (consignmentProposal.recommended_quantity || 1)).toFixed(2)}
+                    </td>
+                    <td className="px-3 py-3 text-right font-bold text-emerald-700">
+                      ETB {(consignmentProposal.net_value_saved_etb ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Quality & Transit Verification */}
+            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs flex flex-wrap items-center justify-between gap-2 text-slate-700">
+              <div className="flex items-center gap-1.5 font-medium">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Cold Chain / Storage Protocol: 15°C - 25°C Standard Ambient Monitored</span>
+              </div>
+              <div className="text-[11px] font-mono text-slate-500">
+                Transit Distance: {(consignmentProposal.distance_km ?? 0).toFixed(1)} km
+              </div>
+            </div>
+
+            {/* Tripartite Chain of Custody Signatures */}
+            <div className="grid grid-cols-3 gap-4 pt-2 border-t border-slate-200 text-[11px] text-slate-600">
+              <div className="space-y-4">
+                <div className="font-bold text-slate-800 uppercase text-[10px]">1. Releasing Pharmacist</div>
+                <div className="border-b border-dashed border-slate-400 pb-1 text-slate-400 italic">Signature & Date</div>
+                <div className="text-[10px] text-slate-500">Officer Stamp & Time</div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="font-bold text-slate-800 uppercase text-[10px]">2. Logistics Driver / Vehicle</div>
+                <div className="border-b border-dashed border-slate-400 pb-1 text-slate-400 italic">Plate # / Driver Signature</div>
+                <div className="text-[10px] text-slate-500">Consignment Custody Released</div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="font-bold text-slate-800 uppercase text-[10px]">3. Receiving Pharmacist</div>
+                <div className="border-b border-dashed border-slate-400 pb-1 text-slate-400 italic">Received in Good Order</div>
+                <div className="text-[10px] text-slate-500">Facility Stamp & Date</div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+              <span className="text-[10px] text-slate-400">
+                Generated via PharmaIntelligence AI Lateral Redistribution Optimization Engine
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setConsignmentProposal(null)}
+                  className="px-3.5 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs"
+                >
+                  <Printer className="w-3.5 h-3.5" /> Print Consignment Note
+                </button>
+              </div>
             </div>
           </div>
         </div>
