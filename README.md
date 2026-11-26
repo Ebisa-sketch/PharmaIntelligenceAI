@@ -150,7 +150,7 @@ Access the application dashboard at: `http://localhost:3000`
 
 Default demo credentials:
 - **Email:** `admin@pharmaintelligence.et`
-- **Password:** `Admin@123456`
+- **Password:** `Admin123!Secure`
 
 ---
 
@@ -159,7 +159,7 @@ Default demo credentials:
 The project features comprehensive end-to-end and unit testing pipelines:
 
 ```powershell
-# 1. Run all 45 Backend Tests (Security, AI Models, Optimization, End-to-End Clinical Flow)
+# 1. Run all 47 Backend Tests (Security, AI Models, Optimization, End-to-End Clinical Flow)
 cd backend
 ..\.venv\Scripts\pytest.exe tests -v
 

@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from typing import Tuple
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
@@ -15,9 +17,21 @@ if db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 elif db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
-
-if db_url.startswith("sqlite"):
+elif db_url.startswith("sqlite"):
     connect_args["check_same_thread"] = False
+    # Ensure relative SQLite path resolves consistently regardless of current working directory
+    if db_url.startswith("sqlite:///") and not db_url.startswith("sqlite:////") and ":memory:" not in db_url:
+        rel_path = db_url.replace("sqlite:///", "")
+        backend_dir = Path(__file__).resolve().parent.parent.parent  # backend
+        project_root = backend_dir.parent
+        # Prefer root if it exists, otherwise backend_dir or default to project_root
+        if (project_root / rel_path).exists() and (project_root / rel_path).stat().st_size > 0:
+            target_path = (project_root / rel_path).resolve()
+        elif (backend_dir / rel_path).exists() and (backend_dir / rel_path).stat().st_size > 0:
+            target_path = (backend_dir / rel_path).resolve()
+        else:
+            target_path = (project_root / rel_path).resolve()
+        db_url = f"sqlite:///{target_path.as_posix()}"
 else:
     # PostgreSQL connection pooling optimizations
     connect_args["connect_timeout"] = 3

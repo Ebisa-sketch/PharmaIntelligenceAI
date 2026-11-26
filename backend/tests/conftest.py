@@ -133,3 +133,26 @@ def db_session():
 def client():
     """Provides a TestClient using the shared application and database."""
     return TestClient(app)
+
+
+@pytest.fixture
+def admin_token_headers(client: TestClient) -> dict:
+    """Provides Authorization headers for the authenticated test administrator."""
+    response = client.post(
+        "/api/v1/auth/login/json",
+        json={"email": "testadmin@pharmaintelligence.et", "password": "AdminSecret123!"},
+    )
+    token = response.json()["token"]["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def manager_token_headers(client: TestClient) -> dict:
+    """Provides Authorization headers for the facility pharmacy manager."""
+    response = client.post(
+        "/api/v1/auth/login/json",
+        json={"email": "testmanager@pharmaintelligence.et", "password": "ManagerSecret123!"},
+    )
+    token = response.json()["token"]["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
